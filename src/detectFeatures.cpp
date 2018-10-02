@@ -24,8 +24,6 @@ int main (int argc, char** argv)
     // for SIFT & SURF: init nonfree at beginning
     //cv::initModule_nonfree;
     detector = cv::FeatureDetector::create("ORB");
-    //detector = cv::ORB::create();
-    //descriptor = cv::ORB::create();
     descriptor = cv::DescriptorExtractor::create("ORB");
 
     // extract the keypoints of two imgs and save to vecKP1,2
