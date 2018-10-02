@@ -1,5 +1,6 @@
 #include<iostream>
 #include"slamBase.h"
+#include"slamBase.cpp"
 using namespace std;
 
 // openCV feature detection module
@@ -10,10 +11,10 @@ using namespace std;
 int main (int argc, char** argv)
 {
     // read two rgb and depth img
-    cv::Mat rgb1 = cv::imread("../data/rgb1.png");
-    cv::Mat rgb2 = cv::imread("../data/rgb2.png");
-    cv::Mat depth1 = cv::imread("../data/depth1.png", -1);
-    cv::Mat depth2 = cv::imread("../data/depth2.png", -1);
+    cv::Mat rgb1 = cv::imread("/home/ling/slam/data/rgb1.png");
+    cv::Mat rgb2 = cv::imread("/home/ling/slam/data/rgb2.png");
+    cv::Mat depth1 = cv::imread("/home/ling/slam/data/depth1.png", -1);
+    cv::Mat depth2 = cv::imread("/home/ling/slam/data/depth2.png", -1);
 
     // declare feature detector and descriptor
     cv::Ptr<cv::FeatureDetector> detector;
@@ -83,7 +84,7 @@ int main (int argc, char** argv)
     
     for(size_t i = 0; i < matches.size(); i++)
     {
-        if (matches[i].distance < 4 * minDistance)
+        if (matches[i].distance < 8 * minDistance)
             goodMatches.push_back(matches[i]);
     }
 
@@ -93,5 +94,71 @@ int main (int argc, char** argv)
     cv::imshow("good matches!", imgShow);
     cv::imwrite("../data/out/god_matches.png", imgShow);
     cv::waitKey(0);
+
+    // calculate the motion between two imgs
+    // key func: cv::solvePnPRansac()
+    // set up the params for the function
+
+    // the 3d point from the first img
+    vector<cv::Point3f> pts_obj;
+
+    // the 2d point on the second img
+    vector<cv::Point2f> pts_img;
+
+    // camera params
+    CAMERA_INTRINSIC_PARAMETERS camParams;
+    camParams.cx = 325.5;
+    camParams.cy = 253.5;
+    camParams.fx = 518.0;
+    camParams.fy = 519.0;
+    camParams.scale = 1000.0;
+
+    
+    for(size_t i = 0; i < goodMatches.size(); i++)
+    {
+        //query: rgb1, train: rgb2
+        cv::Point2f p = vecKP1[goodMatches[i].queryIdx].pt;
+        // y x ->
+        // |
+        // v
+        ushort d = depth1.ptr<ushort>(int(p.y))[int(p.x)];
+        // ignore if d == 0
+        if (d == 0)
+            continue;
+        pts_img.push_back(cv::Point2f(vecKP2[goodMatches[i].trainIdx].pt));
+
+        // (u, v, d) -> (x, y, z)
+        cv::Point3f pt (p.x, p.y, d);
+        cv::Point3f pd = point2dTo3d(pt, camParams);
+        pts_obj.push_back(pd);
+    }
+    
+    double camera_matrix_data[3][3] = {
+        {camParams.fx, 0, camParams.cx},
+        {0, camParams.fy, camParams.cy},
+        {0, 0, 1}
+    };
+
+    // generate camera matrix
+    cv::Mat cameraMatrix(3, 3, CV_64F, camera_matrix_data);
+    cv::Mat vecR, vecT, inliers;
+    // solve PnP
+    cv::solvePnPRansac(
+        pts_obj,
+        pts_img,
+        cameraMatrix,
+        cv::Mat(),
+        vecR,
+        vecT,
+        false,
+        100,
+        1.0,
+        100,
+        inliers
+    );
+
+    cout << "inliers" << inliers.rows << endl;
+    cout << "R = " << vecR << endl;
+    cout << "T = " << vecT << endl;
 
 }
