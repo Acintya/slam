@@ -32,6 +32,6 @@
 *.app
 
 # binaries
-bin/*.*
-
-build/*.*
+bin/
+# build
+build/
