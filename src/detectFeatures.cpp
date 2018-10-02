@@ -67,18 +67,31 @@ int main (int argc, char** argv)
         rgb2, vecKP2, 
         matches, imgShow);
     cv::imshow("matches", imgShow);
-    cv::imwrite("/home/ling/slam/data/out/matches.png", imgShow);
+    cv::imwrite("../data/out/matches.png", imgShow);
     cv::waitKey(0);
 
     // filter out the points with large distance
-    // rule here: point.distance > 4 * min_dis
+    // rule here: point.distance > 4 * min_dis is out!
     vector<cv::DMatch> goodMatches;
     double minDistance = 9999;
     
     for(size_t i = 0; i < matches.size(); i++)
     {
-        /* code */
+        if (matches[i].distance < minDistance)
+            minDistance = matches[i].distance;
     }
     
+    for(size_t i = 0; i < matches.size(); i++)
+    {
+        if (matches[i].distance < 4 * minDistance)
+            goodMatches.push_back(matches[i]);
+    }
+
+    // visu the good matches
+    cout << "good matches = " << goodMatches.size() << endl;
+    cv::drawMatches(rgb1, vecKP1, rgb2, vecKP2, goodMatches, imgShow);
+    cv::imshow("good matches!", imgShow);
+    cv::imwrite("../data/out/god_matches.png", imgShow);
+    cv::waitKey(0);
 
 }
