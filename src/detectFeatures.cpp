@@ -161,4 +161,17 @@ int main (int argc, char** argv)
     cout << "R = " << vecR << endl;
     cout << "T = " << vecT << endl;
 
+    // visu inliers
+    vector<cv::DMatch> matchesShow;
+    
+    for(size_t i = 0; i < inliers.rows; i++)
+    {
+        matchesShow.push_back(goodMatches[inliers.ptr<int>(i)[0]]);
+    }
+    cv::drawMatches(rgb1, vecKP1, rgb2, vecKP2, matchesShow, imgShow);
+    cv::imshow("show inliers", imgShow);
+    cv::imwrite("../data/out/inliers.png", imgShow);
+    cv::waitKey(0);
+
+    return 0;
 }
