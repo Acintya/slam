@@ -10,10 +10,10 @@ using namespace std;
 int main (int argc, char** argv)
 {
     // read two rgb and depth img
-    cv::Mat rgb1 = cv::imread("/home/ling/slam/data/rgb1.png");
-    cv::Mat rgb2 = cv::imread("/home/ling/slam/data/rgb2.png");
-    cv::Mat depth1 = cv::imread("/home/ling/slam/data/depth1.png", -1);
-    cv::Mat depth2 = cv::imread("/home/ling/slam/data/depth2.png", -1);
+    cv::Mat rgb1 = cv::imread("../data/rgb1.png");
+    cv::Mat rgb2 = cv::imread("../data/rgb2.png");
+    cv::Mat depth1 = cv::imread("../data/depth1.png", -1);
+    cv::Mat depth2 = cv::imread("../data/depth2.png", -1);
 
     // declare feature detector and descriptor
     cv::Ptr<cv::FeatureDetector> detector;
@@ -42,13 +42,13 @@ int main (int argc, char** argv)
     cv::drawKeypoints(rgb1, vecKP1, imgShow, cv::Scalar::all(-1),
         cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     cv::imshow("keypoints", imgShow);
-    cv::imwrite("/home/ling/slam/data/out/keypoints1.png", imgShow);
+    cv::imwrite("../data/out/keypoints1.png", imgShow);
     cv::waitKey(0);
 
     cv::drawKeypoints(rgb2, vecKP2, imgShow, cv::Scalar::all(-1),
         cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
     cv::imshow("keypoints2", imgShow);
-    cv::imwrite("/home/ling/slam/data/out/keypoints2.png", imgShow);
+    cv::imwrite("../data/out/keypoints2.png", imgShow);
     cv::waitKey(0);
 
     // compute descriptor
