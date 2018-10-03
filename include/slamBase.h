@@ -45,3 +45,25 @@ void calculateRandTwithPnP (
     cv::Mat& vecR,
     cv::Mat& vecT,
     cv::Mat& inliers);
+
+// Frame
+struct tFrame
+{
+    cv::Mat rgbImg, depthImg;
+    cv::Mat desp;
+    vector<cv::KeyPoint> vecKP;
+};
+
+// Result of Pnp
+struct tResultOfPnP
+{
+    cv::Mat vecT, vecR;
+    int inliers;
+};
+
+// compute key points and desp
+void computeKeyPointsAndDesp (tFrame& frame, string detector, string descriptor);
+
+// estimate the motion between two frames
+// Input: frame 1 and 2, cam params
+tResultOfPnP estimateMotion (tFrame &, tFrame &, CAMERA_INTRINSIC_PARAMETERS);
