@@ -58,3 +58,67 @@ cv::Point3f point2dTo3d( cv::Point3f& point, CAMERA_INTRINSIC_PARAMETERS& camera
     p.y = ( point.y - camera.cy) * p.z / camera.fy;
     return p;
 }
+
+// calculate the motion between two imgs
+// key func: cv::solvePnPRansac()
+void calculateRandTwithPnP (
+    cv::Mat depth1,
+    vector<cv::KeyPoint> vecKP1,
+    vector<cv::KeyPoint> vecKP2,
+    vector<cv::DMatch> goodMatches,
+    CAMERA_INTRINSIC_PARAMETERS camParams,
+    cv::Mat& vecR,
+    cv::Mat& vecT,
+    cv::Mat& inliers)
+{
+    // set up the params for the function
+
+    // the 3d point from the first img
+    vector<cv::Point3f> pts_obj;
+
+    // the 2d point on the second img
+    vector<cv::Point2f> pts_img;
+
+    for(size_t i = 0; i < goodMatches.size(); i++)
+    {
+        //query: rgb1, train: rgb2
+        cv::Point2f p = vecKP1[goodMatches[i].queryIdx].pt;
+        // y x ->
+        // |
+        // v
+        ushort d = depth1.ptr<ushort>(int(p.y))[int(p.x)];
+        // ignore if d == 0
+        if (d == 0)
+            continue;
+        pts_img.push_back(cv::Point2f(vecKP2[goodMatches[i].trainIdx].pt));
+
+        // (u, v, d) -> (x, y, z)
+        cv::Point3f pt (p.x, p.y, d);
+        cv::Point3f pd = point2dTo3d(pt, camParams);
+        pts_obj.push_back(pd);
+    }
+    
+    double camera_matrix_data[3][3] = {
+        {camParams.fx, 0, camParams.cx},
+        {0, camParams.fy, camParams.cy},
+        {0, 0, 1}
+    };
+
+    // generate camera matrix
+    cv::Mat cameraMatrix(3, 3, CV_64F, camera_matrix_data);
+    //cv::Mat vecR, vecT, inliers;
+    // solve PnP
+    cv::solvePnPRansac(
+        pts_obj,
+        pts_img,
+        cameraMatrix,
+        cv::Mat(),
+        vecR,
+        vecT,
+        false,
+        100,
+        1.0,
+        100,
+        inliers
+    );
+}

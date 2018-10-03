@@ -1,4 +1,3 @@
-
 # pragma once
 
 // 各种头文件 
@@ -10,6 +9,10 @@ using namespace std;
 // OpenCV
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+// openCV feature detection module
+#include<opencv2/features2d/features2d.hpp>
+//#include<opencv2/nonfree/nonfree.hpp>
+#include<opencv2/calib3d/calib3d.hpp>
 
 // PCL
 #include <pcl/io/pcd_io.h>
@@ -32,3 +35,13 @@ PointCloud::Ptr image2PointCloud (cv::Mat& rgb, cv::Mat& depth, CAMERA_INTRINSIC
 cv::Point3f point2DTo3D (cv::Point3f & point, CAMERA_INTRINSIC_PARAMETERS & camera, string pcdFilePath);
 // save pc to pcd file
 void savePC2PCD (PointCloud::Ptr cloudPtr, string pcdFilePath);
+
+void calculateRandTwithPnP (
+    cv::Mat depth1,
+    vector<cv::KeyPoint> vecKP1,
+    vector<cv::KeyPoint> vecKP2,
+    vector<cv::DMatch> goodMatches,
+    CAMERA_INTRINSIC_PARAMETERS camParams,
+    cv::Mat& vecR,
+    cv::Mat& vecT,
+    cv::Mat& inliers);
