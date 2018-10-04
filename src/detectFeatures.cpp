@@ -41,21 +41,6 @@ int main (int argc, char** argv)
         frame2, 
         camParams, 
         _resultOfPnP);
-    
-    // // visu matches
-    // cv::drawMatches(rgb1, vecKP1, 
-    //     rgb2, vecKP2, 
-    //     matches, imgShow);
-    // cv::imshow("matches", imgShow);
-    // cv::imwrite("../data/out/matches.png", imgShow);
-    // cv::waitKey(0);
-
-    // // visu the good matches
-    // cout << "good matches = " << goodMatches.size() << endl;
-    // cv::drawMatches(rgb1, vecKP1, rgb2, vecKP2, goodMatches, imgShow);
-    // cv::imshow("good matches!", imgShow);
-    // cv::imwrite("../data/out/god_matches.png", imgShow);
-    // cv::waitKey(0); 
 
     return 0;
 }

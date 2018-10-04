@@ -61,9 +61,10 @@ struct tResultOfPnP
     int numInliers;
 };
 
-// compute key points and desp
+// compute key points and descriptor
 void computeKeyPointsAndDesp (tFrame& frame, string detector, string descriptor);
 
 // estimate the motion between two frames
 // Input: frame 1 and 2, cam params
-tResultOfPnP estimateMotion (tFrame &, tFrame &, CAMERA_INTRINSIC_PARAMETERS, tResultOfPnP & _resultOfPnP);
+// save result in tResultOfPnP
+void estimateMotion (tFrame &, tFrame &, CAMERA_INTRINSIC_PARAMETERS, tResultOfPnP & _resultOfPnP);

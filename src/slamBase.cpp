@@ -197,8 +197,6 @@ tResultOfPnP estimateMotion (tFrame & frame1, tFrame & frame2, CAMERA_INTRINSIC_
     }
     cout << "Good matches: " << goodMatches.size();
 
-
-
     calculateRandTwithPnP (
     frame1.depthImg,
     frame1.vecKP,
@@ -230,26 +228,4 @@ tResultOfPnP estimateMotion (tFrame & frame1, tFrame & frame2, CAMERA_INTRINSIC_
     }
 
     return _resultOfPnP;
-    
 }
-
-    // cout << "key points found in rgb1: " << vecKP1.size();
-    // cout << endl;
-    // cout << "key points found in rgb2: " << vecKP2.size();
-    // cout << endl;
-
-    // visu
-    // cv::Mat imgShow;
-    // cv::drawKeypoints(rgb1, vecKP1, imgShow, cv::Scalar::all(-1),
-    //     cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    // cv::imshow("keypoints", imgShow);
-    // cv::imwrite("../data/out/keypoints1.png", imgShow);
-    // cv::waitKey(0);
-
-    // cv::drawKeypoints(rgb2, vecKP2, imgShow, cv::Scalar::all(-1),
-    //     cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    // cv::imshow("keypoints2", imgShow);
-    // cv::imwrite("../data/out/keypoints2.png", imgShow);
-    // cv::waitKey(0);
-
-
