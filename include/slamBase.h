@@ -57,8 +57,8 @@ struct tFrame
 // Result of Pnp
 struct tResultOfPnP
 {
-    cv::Mat vecT, vecR;
-    int inliers;
+    cv::Mat vecT, vecR, inliers;
+    int numInliers;
 };
 
 // compute key points and desp
@@ -66,4 +66,4 @@ void computeKeyPointsAndDesp (tFrame& frame, string detector, string descriptor)
 
 // estimate the motion between two frames
 // Input: frame 1 and 2, cam params
-tResultOfPnP estimateMotion (tFrame &, tFrame &, CAMERA_INTRINSIC_PARAMETERS);
+tResultOfPnP estimateMotion (tFrame &, tFrame &, CAMERA_INTRINSIC_PARAMETERS, tResultOfPnP & _resultOfPnP);
