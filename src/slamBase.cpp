@@ -168,7 +168,7 @@ void computeKeyPointsAndDesp (tFrame& frame, string detectorType, string descrip
     return;
 }
 
-tResultOfPnP estimateMotion (tFrame & frame1, tFrame & frame2, CAMERA_INTRINSIC_PARAMETERS camParams, tResultOfPnP& _resultOfPnP)
+void estimateMotion (tFrame & frame1, tFrame & frame2, CAMERA_INTRINSIC_PARAMETERS camParams, tResultOfPnP& _resultOfPnP)
 {
     //TO-DO: Implementation of ParamReader
     //static ParamReader mParamReader;
@@ -227,5 +227,5 @@ tResultOfPnP estimateMotion (tFrame & frame1, tFrame & frame2, CAMERA_INTRINSIC_
         cv::waitKey(0);
     }
 
-    return _resultOfPnP;
+    //return _resultOfPnP;
 }

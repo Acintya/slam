@@ -4,12 +4,32 @@
 using namespace std;
 
 // openCV feature detection module
-#include<opencv2/features2d/features2d.hpp>
+#include <opencv2/features2d/features2d.hpp>
 //#include<opencv2/nonfree/nonfree.hpp>
-#include<opencv2/calib3d/calib3d.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+//for laptop camera
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
 
 int main (int argc, char** argv)
 {
+    //open cam
+    cv::VideoCapture cap(0);
+    if (!cap.isOpened())
+    {
+        return -1;
+    }
+    cv::Mat frame, edges;
+    bool stop = false;
+    while (!stop)
+    {
+        cap >> frame;
+        cv::imshow("cam", frame);
+        if (cv::waitKey(30) >= 0)
+            stop =true;
+    }
+
     // read two rgb and depth img
     cv::Mat rgb1 = cv::imread("/home/ling/slam/data/rgb1.png");
     cv::Mat rgb2 = cv::imread("/home/ling/slam/data/rgb2.png");
