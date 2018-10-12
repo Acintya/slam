@@ -122,3 +122,110 @@ void calculateRandTwithPnP (
         inliers
     );
 }
+
+// compute key points and desp
+void computeKeyPointsAndDesp (tFrame& frame, string detectorType, string descriptorType)
+{
+    cv::Ptr<cv::FeatureDetector> detector;
+    cv::Ptr<cv::DescriptorExtractor> despExtractor;
+
+    // build detector and descriptor
+    // for SIFT & SURF: init nonfree at beginning
+    //cv::initModule_nonfree;
+    detector = cv::FeatureDetector::create(detectorType.c_str());
+    despExtractor = cv::DescriptorExtractor::create(descriptorType.c_str());
+
+    if (!detector || !despExtractor)
+    {
+        cerr << "Unknown detector or descriptor type." << endl;
+        cout << detector << ", " << despExtractor << endl;
+        return;
+    }
+
+    // extract the keypoints of two imgs and save to vecKP1,2
+    detector->detect(frame.rgbImg, frame.vecKP);
+    despExtractor->compute(frame.rgbImg, frame.vecKP, frame.desp);
+    
+    cout << "key points found in frame: " << frame.vecKP.size();
+    cout << endl;
+    
+    // visu
+    bool isVisu = true;
+    if (isVisu)
+    {
+        cv::Mat imgShow;
+        cv::drawKeypoints(
+            frame.rgbImg, 
+            frame.vecKP, 
+            imgShow, 
+            cv::Scalar::all(-1),
+            cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        cv::imshow("keypoints", imgShow);
+        cv::imwrite("../data/out/keypoints1.png", imgShow);
+        cv::waitKey(0);
+    }
+
+    return;
+}
+
+void estimateMotion (tFrame & frame1, tFrame & frame2, CAMERA_INTRINSIC_PARAMETERS camParams, tResultOfPnP& _resultOfPnP)
+{
+    //TO-DO: Implementation of ParamReader
+    //static ParamReader mParamReader;
+    //double goodMatchThreshold = atof(mParamReader.getData ("good_match_threshold").c_str());
+    double goodMatchThreshold = 8.0;
+
+    //cv::FlannBasedMatcher matcher;
+    cv::BFMatcher matcher;
+    vector<cv::DMatch> matches;
+    matcher.match(frame1.desp, frame2.desp, matches);
+    cout << "Matches found: " << matches.size() << endl;
+    // filter out the good matches
+    vector<cv::DMatch> goodMatches;
+    double minDistance = 9999;
+    
+    
+    for (size_t i = 0; i < matches.size(); i++)
+    {
+        if (matches[i].distance < minDistance)
+            minDistance = matches[i].distance;
+    }
+    for (size_t i = 0; i < matches.size(); i++)
+    {
+        if (matches[i].distance < goodMatchThreshold * minDistance)
+            goodMatches.push_back(matches[i]);
+    }
+    cout << "Good matches: " << goodMatches.size();
+
+    calculateRandTwithPnP (
+    frame1.depthImg,
+    frame1.vecKP,
+    frame2.vecKP,
+    goodMatches,
+    camParams,
+    _resultOfPnP.vecR,
+    _resultOfPnP.vecT,
+    _resultOfPnP.inliers);
+
+    cout << "inliers" << _resultOfPnP.inliers.rows << endl;
+    cout << "R = " << _resultOfPnP.vecR << endl;
+    cout << "T = " << _resultOfPnP.vecT << endl;
+
+    if (1)
+    {
+        // visu inliers
+        vector<cv::DMatch> matchesShow;
+        cv::Mat imgShow;
+        
+        for(size_t i = 0; i < _resultOfPnP.inliers.rows; i++)
+        {
+            matchesShow.push_back(goodMatches[_resultOfPnP.inliers.ptr<int>(i)[0]]);
+        }
+        cv::drawMatches(frame1.rgbImg, frame1.vecKP, frame2.rgbImg, frame2.vecKP, matchesShow, imgShow);
+        cv::imshow("show inliers", imgShow);
+        cv::imwrite("../data/out/inliers.png", imgShow);
+        cv::waitKey(0);
+    }
+
+    //return _resultOfPnP;
+}

@@ -4,6 +4,10 @@ FIND_PACKAGE (PCL REQUIRED COMPONENTS common io)
 #add opencv
 FIND_PACKAGE (OpenCV 2 REQUIRED)
 
+#sophus
+FIND_PACKAGE (Sophus REQUIRED)
+include_directories(${Sophus_INCLUDE_DIRS})
+
 #add header and lib
 ADD_DEFINITIONS (${PCL_DEFINITIONS})
 INCLUDE_DIRECTORIES (${PCL_INCLUDE_DIRS})
@@ -26,3 +30,6 @@ TARGET_LINK_LIBRARIES (detectFeatures
     slambase
     ${OpenCV_LIBS}
     ${PCL_LIBRARIES})
+
+ADD_EXECUTABLE (useSophus useSophus.cpp)
+TARGET_LINK_LIBRARIES (useSophus ${Sophus_LIBRARIES})
