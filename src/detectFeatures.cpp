@@ -15,20 +15,20 @@ using namespace std;
 int main (int argc, char** argv)
 {
     //open cam
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened())
-    {
-        return -1;
-    }
-    cv::Mat frame, edges;
-    bool stop = false;
-    while (!stop)
-    {
-        cap >> frame;
-        cv::imshow("cam", frame);
-        if (cv::waitKey(30) >= 0)
-            stop =true;
-    }
+    // cv::VideoCapture cap(0);
+    // if (!cap.isOpened())
+    // {
+    //     return -1;
+    // }
+    // cv::Mat frame, edges;
+    // bool stop = false;
+    // while (!stop)
+    // {
+    //     cap >> frame;
+    //     cv::imshow("cam", frame);
+    //     if (cv::waitKey(30) >= 0)
+    //         stop =true;
+    // }
 
     // read two rgb and depth img
     cv::Mat rgb1 = cv::imread("/home/ling/slam/data/rgb1.png");
